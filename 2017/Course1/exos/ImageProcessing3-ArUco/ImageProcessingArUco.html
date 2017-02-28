@@ -1,6 +1,7 @@
 ﻿<!DOCTYPE html>
 <html>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="style.css">
 
 <body>
     <script type="text/javascript" src="lib/cv.js"></script>
@@ -16,8 +17,8 @@
 
     <video id="webcam" style="display:none;" height="480" width="640"></video>
     <div style=" width:640px;height:480px;margin: 10px auto;">
-        <canvas id="canvas2d" width="640" height="480"></canvas>
-        <canvas id="canvas3d" width="640" height="480"></canvas>
+        <canvas class="overlapcanvas" id="canvas2d" width="640" height="480"></canvas>
+        <canvas class="overlapcanvas" id="canvas3d" width="640" height="480"></canvas>
         <div id="log"></div>
     </div>
 
@@ -31,6 +32,8 @@
         var img_u8;
         var modelSize = 35;
         var step = 0.0;
+        var stepY = 0.0;
+        var stepZ = 0.0;
         var renderer3d, scene, camera, model, texture;
         var imageData, markers, detector, posit;
 
@@ -166,6 +169,13 @@
                 stat.start("Update");
                 updateObject(model, pose.bestRotation, pose.bestTranslation);
                 stat.stop("Update");
+
+                step += 0.025;
+                stepY += 0.025;
+                stepZ += 0.050;
+                model.rotation.x -= step;
+                model.rotation.y -= stepY;
+                model.rotation.z -= stepZ;
             }
         };
 
