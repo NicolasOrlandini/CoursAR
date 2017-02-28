@@ -14,8 +14,8 @@
 
     <video id="webcam" style="display:none;" height="480" width="640"></video>
     <div style=" width:640px;height:480px;margin: 10px auto;">
-        <canvas id="canvas2d" width="640" height="480" ></canvas>
-        <canvas id="canvas3d" width="640" height="480" ></canvas>
+        <canvas  class="overlapcanvas" id="canvas2d" width="640" height="480" ></canvas>
+        <canvas  class="overlapcanvas" id="canvas3d" width="640" height="480" ></canvas>
         <div id="log"></div>
     </div>
 
@@ -81,14 +81,16 @@
         };
 
         function createRenderersScene() {
-            renderer3d = new THREE.WebGLRenderer({ canvas: canvas3D });
+            renderer3d = new THREE.WebGLRenderer({ canvas: canvas3D, alpha: true });
             renderer3d.setClearColor(0xffffff, 0);
             renderer3d.setSize(canvas2d.width, canvas2d.height);
 
             // for 3d projection
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(40, canvas2d.width / canvas2d.height, 1, 1000);
+            scene.background = new THREE.Color(0xff0000);
             scene.add(camera);
+
 
             model = createModel();
             scene.add(model);
