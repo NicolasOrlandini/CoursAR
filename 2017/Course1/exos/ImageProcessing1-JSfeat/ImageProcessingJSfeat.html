@@ -21,7 +21,11 @@
         var log = document.getElementById('log');
         var stat = new profiler();
         var ctx;
-        var img_u8;
+        //var img_u8;
+        var gray_img;
+        var width = 640;
+        var height = 480;
+        var code;
 
         // onload ask for camera and call demo_app
         window.onload = function () {
@@ -45,7 +49,8 @@
             function demo_app(videoWidth, videoHeight) {
                 ctx = canvas.getContext('2d');
 
-                img_u8 = new jsfeat.matrix_t(640, 480, jsfeat.U8_t | jsfeat.C1_t);
+                img_u8 = new jsfeat.matrix_t(width, height, jsfeat.U8_t | jsfeat.C1_t);
+                code = jsfeat.COLOR_RGBA2GRAY;
 
                 compatibility.requestAnimationFrame(tick);
 
@@ -59,23 +64,28 @@
                 compatibility.requestAnimationFrame(tick);
                 stat.new_frame();
                 if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                    ctx.drawImage(video, 0, 0, 640, 480);
-                    var imageData = ctx.getImageData(0, 0, 640, 480);
+                    ctx.drawImage(video, 0, 0, width, height);
+                    var imageData = ctx.getImageData(0, 0, width, height);
 
                     // greyscale conversion
                     stat.start("grayscale");
                     // I should put some code here
                    
+                    jsfeat.imgproc.grayscale(imageData.data, width, height, img_u8, code);
 
                     stat.stop("grayscale");
 
                     // render result back to canvas (Warning: format is RGBA)
                     stat.start("rewrite");
                     // I should put some more code here
-                    
 
-
-
+                    var data_u32 = new Uint32Array(imageData.data.buffer);
+                    var alpha = (0xff << 24);
+                    var i = img_u8.cols*img_u8.rows, pix = 0;
+                    while(--i >= 0) {
+                        pix = img_u8.data[i];
+                        data_u32[i] = alpha | (pix << 16) | (pix << 8) | pix;
+                    }
 
                     stat.stop("rewrite");
 
